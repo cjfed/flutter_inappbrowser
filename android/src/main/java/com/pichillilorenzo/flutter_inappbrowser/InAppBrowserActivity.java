@@ -7,8 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Picture;
 import android.graphics.drawable.ColorDrawable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -31,13 +29,11 @@ import io.flutter.app.FlutterActivity;
 import io.flutter.app.FlutterApplication;
 import io.flutter.plugin.common.MethodChannel;
 
-public class InAppBrowserActivity extends AppCompatActivity {
+public class InAppBrowserActivity extends Activity {
 
   static final String LOG_TAG = "InAppBrowserActivity";
   public String uuid;
   public InAppWebView webView;
-  public ActionBar actionBar;
-  public Menu menu;
   public SearchView searchView;
   public InAppBrowserOptions options;
   public Map<String, String> headers;
@@ -68,8 +64,6 @@ public class InAppBrowserActivity extends AppCompatActivity {
     webView.options = webViewOptions;
 
     InAppBrowserFlutterPlugin.webViewActivities.put(uuid, this);
-
-    actionBar = getSupportActionBar();
 
     prepareView();
 
@@ -109,77 +103,6 @@ public class InAppBrowserActivity extends AppCompatActivity {
     else
       progressBar.setMax(100);
 
-    actionBar.setDisplayShowTitleEnabled(!options.hideTitleBar);
-
-    if (!options.toolbarTop)
-      actionBar.hide();
-
-    if (!options.toolbarTopBackgroundColor.isEmpty())
-      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(options.toolbarTopBackgroundColor)));
-
-    if (!options.toolbarTopFixedTitle.isEmpty())
-      actionBar.setTitle(options.toolbarTopFixedTitle);
-
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu m) {
-    menu = m;
-
-    MenuInflater inflater = getMenuInflater();
-    // Inflate menu to add items to action bar if it is present.
-    inflater.inflate(R.menu.menu_main, menu);
-
-    searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-    searchView.setFocusable(true);
-
-    if (options.hideUrlBar)
-      menu.findItem(R.id.menu_search).setVisible(false);
-
-    searchView.setQuery(webView.getUrl(), false);
-
-    if (options.toolbarTopFixedTitle.isEmpty())
-      actionBar.setTitle(webView.getTitle());
-
-    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-      @Override
-      public boolean onQueryTextSubmit(String query) {
-        if (!query.isEmpty()) {
-          webView.loadUrl(query);
-          searchView.setQuery("", false);
-          searchView.setIconified(true);
-          return true;
-        }
-        return false;
-      }
-
-      @Override
-      public boolean onQueryTextChange(String newText) {
-        return false;
-      }
-
-    });
-
-    searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-      @Override
-      public boolean onClose() {
-        if (searchView.getQuery().toString().isEmpty())
-          searchView.setQuery(webView.getUrl(), false);
-        return false;
-      }
-    });
-
-    searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override
-      public void onFocusChange(View view, boolean b) {
-        if (!b) {
-          searchView.setQuery("", false);
-          searchView.setIconified(true);
-        }
-      }
-    });
-
-    return true;
   }
 
   public String getUrl() {
@@ -393,29 +316,6 @@ public class InAppBrowserActivity extends AppCompatActivity {
         progressBar.setMax(0);
       else
         progressBar.setMax(100);
-    }
-
-    if (newOptionsMap.get("hideTitleBar") != null && options.hideTitleBar != newOptions.hideTitleBar)
-      actionBar.setDisplayShowTitleEnabled(!newOptions.hideTitleBar);
-
-    if (newOptionsMap.get("toolbarTop") != null && options.toolbarTop != newOptions.toolbarTop) {
-      if (!newOptions.toolbarTop)
-        actionBar.hide();
-      else
-        actionBar.show();
-    }
-
-    if (newOptionsMap.get("toolbarTopBackgroundColor") != null && options.toolbarTopBackgroundColor != newOptions.toolbarTopBackgroundColor && !newOptions.toolbarTopBackgroundColor.isEmpty())
-      actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(newOptions.toolbarTopBackgroundColor)));
-
-    if (newOptionsMap.get("toolbarTopFixedTitle") != null && options.toolbarTopFixedTitle != newOptions.toolbarTopFixedTitle && !newOptions.toolbarTopFixedTitle.isEmpty())
-      actionBar.setTitle(newOptions.toolbarTopFixedTitle);
-
-    if (newOptionsMap.get("hideUrlBar") != null && options.hideUrlBar != newOptions.hideUrlBar) {
-      if (newOptions.hideUrlBar)
-        menu.findItem(R.id.menu_search).setVisible(false);
-      else
-        menu.findItem(R.id.menu_search).setVisible(true);
     }
 
     options = newOptions;
