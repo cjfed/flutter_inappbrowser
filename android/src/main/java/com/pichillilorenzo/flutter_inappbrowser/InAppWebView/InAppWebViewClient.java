@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
-import androidx.annotation.RequiresApi;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -297,7 +296,6 @@ public class InAppWebViewClient extends WebViewClient {
     super.onReceivedHttpAuthRequest(view, handler, host, realm);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @Override
   public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
     if (!request.getMethod().toLowerCase().equals("get") ||
