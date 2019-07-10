@@ -123,8 +123,6 @@ public class InAppWebChromeClient extends WebChromeClient {
   @Override
   public void onReceivedTitle(WebView view, String title) {
     super.onReceivedTitle(view, title);
-    if (inAppBrowserActivity != null && inAppBrowserActivity.actionBar != null && inAppBrowserActivity.options.toolbarTopFixedTitle.isEmpty())
-      inAppBrowserActivity.actionBar.setTitle(title);
   }
 
   @Override
